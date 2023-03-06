@@ -122,19 +122,29 @@ async def adminreaction(message):
 
 
 @dp.message_handler(commands=['start_promotion'])
-async def start_promotion(message):
+async def start_promotion(message: types.Message):
     isAdmin = await get_user_status(message.from_user.id)
     if isAdmin==True:
-        await promotion(True)
-        await bot.send_message(CHAT_ID, 'Акция началась, все premium обои перешли в статус обычных')
-        msg = 'Началась акция! Все премиум обои теперь можно установить без просмотра рекламы!'
-        users = await get_users()
-        for user in users:
-            await bot.send_message(user[0], f'Уведомление от команды Ultimate Wallpapers:\n{msg}')
+        msg = message.text.split(" ", 1)
+        if len(msg) > 1:
+            if len(msg[1]) > 0:
+                await promotion(True)
+                await bot.send_message(CHAT_ID, 'Акция началась, все premium обои перешли в статус обычных')
+                msg = f'{msg[1]}\nНачалась акция! Все премиум обои теперь можно установить без просмотра рекламы!'
+                users = await get_users()
+                for user in users:
+                    await bot.send_message(user[0], f'Уведомление от команды Ultimate Wallpapers:\n{msg}')
+        else:
+            await promotion(True)
+            await bot.send_message(CHAT_ID, 'Акция началась, все premium обои перешли в статус обычных')
+            msg = f'Началась акция! Все премиум обои теперь можно установить без просмотра рекламы!'
+            users = await get_users()
+            for user in users:
+                await bot.send_message(user[0], f'Уведомление от команды Ultimate Wallpapers:\n{msg}')
 
 
 @dp.message_handler(commands=['end_promotion'])
-async def end_promotion(message):
+async def start_promotion(message):
     isAdmin = await get_user_status(message.from_user.id)
     if isAdmin==True:
         await promotion(False)
