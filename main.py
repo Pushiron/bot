@@ -1,7 +1,7 @@
 import asyncio
 from aiogram import Bot, Dispatcher, executor, types
 from core.settings import CONSOLE_LOG, TOKEN_API, CHAT_ID, VERSION
-from api.v1.api import CategoryMenu, GetRequest
+from api.v1.api import CategoryMenu, GetRequest, promotion
 from database.sqlite import db_start, create_user, get_users, get_user_status, save_wallpaper
 from aiogram.utils.exceptions import (MessageCantBeDeleted, MessageToDeleteNotFound)
 from contextlib import suppress
@@ -119,6 +119,30 @@ async def adminreaction(message):
         msg = await bot.send_message(message.chat.id, '👍 - Начал загружать обои\n\n'
                                                 '👎 - Обои отклонены')
         asyncio.create_task(delete_message(msg, 10))
+
+
+@dp.message_handler(commands=['start_promotion'])
+async def start_promotion(message):
+    isAdmin = await get_user_status(message.from_user.id)
+    if isAdmin==True:
+        await promotion(True)
+        await bot.send_message(CHAT_ID, 'Акция началась, все premium обои перешли в статус обычных')
+        msg = 'Началась акция! Все премиум обои теперь можно установить без просмотра рекламы!'
+        users = await get_users()
+        for user in users:
+            await bot.send_message(user[0], f'Уведомление от команды Ultimate Wallpapers:\n{msg}')
+
+
+@dp.message_handler(commands=['end_promotion'])
+async def end_promotion(message):
+    isAdmin = await get_user_status(message.from_user.id)
+    if isAdmin==True:
+        await promotion(False)
+        await bot.send_message(CHAT_ID, 'Акция окончена, все premium обои перешли в статус premium')
+        msg = 'Акция закончилась! Все премиум обои теперь вновь требуют просмотра рекламы!'
+        users = await get_users()
+        for user in users:
+            await bot.send_message(user[0], f'Уведомление от команды Ultimate Wallpapers:\n{msg}')
 
 
 @dp.message_handler(commands=['bot_version'])

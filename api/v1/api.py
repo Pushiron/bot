@@ -19,3 +19,11 @@ async def CategoryMenu(obj):
 async def GetRequest():
     response = requests.get(f"{API_URL}categories=True")
     return response.json()
+
+async def promotion(state):
+    if state == True:
+        response = requests.get(f"{API_URL}promotion=True")
+        return response.json()
+    else:
+        response = requests.get(f"{API_URL}promotion=False")
+        return response.json()
