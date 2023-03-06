@@ -22,8 +22,6 @@ async def GetRequest():
 
 async def promotion(state):
     if state == True:
-        response = requests.get(f"{API_URL}promotion=True")
-        return response.json()
+        requests.get(f"{API_URL}promotion=True")
     else:
-        response = requests.get(f"{API_URL}promotion=False")
-        return response.json()
+        requests.get(f"{API_URL}promotion=False")
