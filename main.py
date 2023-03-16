@@ -2,18 +2,27 @@ import asyncio
 from aiogram import Bot, Dispatcher, executor, types
 from core.settings import CONSOLE_LOG, TOKEN_API, CHAT_ID, VERSION
 from api.v1.api import CategoryMenu, GetRequest, promotion
-from database.sqlite import db_start, create_user, get_users, get_user_status, save_wallpaper
+from database.sqlite import db_start, create_user, get_users, get_user_status, save_wallpaper, setRole
 from aiogram.utils.exceptions import (MessageCantBeDeleted, MessageToDeleteNotFound)
 from contextlib import suppress
 
 
-
 bot = Bot(TOKEN_API)
+
+
 dp = Dispatcher(bot)
+
 
 wallpaper = ''
 
+
 SEND = False
+
+
+NOTE_TITLE = ''
+
+
+NOTE_BODY = ''
 
 
 async def on_startup(_):
@@ -27,6 +36,7 @@ async def delete_message(message: types.Message, sleep_time: int = 0):
     with suppress(MessageCantBeDeleted, MessageToDeleteNotFound):
         await message.delete()
 
+
 # Функция регистрирует пользователя и отправляет приветственное сообщение
 @dp.message_handler(commands=['start'])
 async def welcome(message: types.Message):
@@ -35,6 +45,7 @@ async def welcome(message: types.Message):
                                             'и я перешлю его модераторам, для того, чтобы они проверили его.\n'
                                             'Если изображение будет одобрено, то оно будет добавлено в приложение =)\n'
                                             'Если есть вопросы, напиши /help')
+
 
 # Функция для отправки уведомлений пользователю
 @dp.message_handler(commands=['note'])
@@ -52,6 +63,45 @@ async def send_notification(message: types.Message):
         else:
             await bot.send_message(CHAT_ID, 'Вы не указали текст уведомления. Пример команды\n'
                                             '/note <message>')
+
+
+@dp.message_handler(commands=['makeadmin'])
+async def make_admin(message: types.Message):
+    isAdmin = await get_user_status(message.from_user.id)
+    if isAdmin == True:
+        msg = message.text.split(" ", 1)
+        if len(msg) > 1 and len(msg[1]) > 3:
+            await setRole(msg[1], 1)
+            await bot.send_message(CHAT_ID, f'Пользователь {msg[1]} назначен администратором')
+
+
+@dp.message_handler(commands=['makeuser'])
+async def make_admin(message: types.Message):
+    isAdmin = await get_user_status(message.from_user.id)
+    if isAdmin == True:
+        msg = message.text.split(" ", 1)
+        if len(msg) > 1 and len(msg[1]) > 3:
+            if msg[1] == '645755081':
+                await bot.send_message(message.chat.id, 'Нахуй пошел')
+            else:
+                await setRole(msg[1], 0)
+                await bot.send_message(CHAT_ID, f'Пользователь {msg[1]} разжалован')
+
+
+
+@dp.message_handler(commands=['list'])
+async def set_user_role(message: types.Message):
+    isAdmin = await get_user_status(message.from_user.id)
+    if isAdmin == True:
+        msg = message.text.split(" ", 1)
+        if len(msg) > 1 and len(msg[1]) == 2 and msg[1] == '-u':
+            users = await get_users()
+            for user in users:
+                if user[2] == 1:
+                    role = 'Администратор'
+                else:
+                    role = 'Пользователь'
+                await bot.send_message(message.chat.id, f"Пользователь: {user[1]};\nUID: {user[0]};\nРоль: {role}")
 
 
 @dp.message_handler(commands=['help'])
@@ -90,6 +140,20 @@ async def help_comma(message):
                                                 'изображение отклонено и причину, содержащуюся в message. \n'
                                                 '!!!ВНИМАНИЕ!!!\n'
                                                 'Команда удаляет сообщение с изображением')
+                asyncio.create_task(delete_message(msg, 60))
+            elif msg[1] == 'list':
+                msg = await bot.send_message(CHAT_ID, 'Команда /list {argument} \n'
+                                                'Команда имеет аргументы, которые обязательны\n'
+                                                'для заполнения.\n'
+                                                '\n'
+                                                '-u - Выводит список всех пользователей')
+                asyncio.create_task(delete_message(msg, 60))
+            elif msg[1] == 'setrole':
+                msg = await bot.send_message(CHAT_ID, 'Команда /makeadmin {user_id} \n'
+                                                'Команда имеет аргумент, которые обязателен\n'
+                                                'для заполнения.\n'
+                                                '\n'
+                                                'user_id - id пользователя. Узнать можно через команду /list -u')
                 asyncio.create_task(delete_message(msg, 60))
         else:
             msg = await bot.send_message(CHAT_ID, 'Команды администратора:\n'

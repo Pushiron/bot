@@ -25,3 +25,10 @@ async def promotion(state):
         requests.get(f"{API_URL}promotion=True")
     else:
         requests.get(f"{API_URL}promotion=False")
+
+async def inapp_notification(title, message):
+    if len(title) == 0:
+        return 'Title error'
+    if len(message) == 0:
+        return 'Message error'
+    requests.get(f'{API_URL}notification=True&title={title}&message={message}')
