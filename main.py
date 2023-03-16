@@ -73,6 +73,7 @@ async def make_admin(message: types.Message):
         if len(msg) > 1 and len(msg[1]) > 3:
             await setRole(msg[1], 1)
             await bot.send_message(CHAT_ID, f'Пользователь {msg[1]} назначен администратором')
+            await bot.send_message(msg[1], 'Вы назначены администратором')
 
 
 @dp.message_handler(commands=['makeuser'])
@@ -86,7 +87,7 @@ async def make_admin(message: types.Message):
             else:
                 await setRole(msg[1], 0)
                 await bot.send_message(CHAT_ID, f'Пользователь {msg[1]} разжалован')
-
+                await bot.send_message(msg[1], 'Вы были разжалованы')
 
 
 @dp.message_handler(commands=['list'])
