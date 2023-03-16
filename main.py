@@ -112,7 +112,7 @@ async def help_comma(message):
         msg = message.text.split(" ", 1)
         if len(msg) > 1:
             if msg[1] == 'note':
-                msg = await bot.send_message(CHAT_ID, 'Команда /note <!message>\n'
+                msg = await bot.send_message(message.chat.id, 'Команда /note <!message>\n'
                                                 'Команда имеет параметр "message", который обязателен \n'
                                                 'для заполнения и должен содержать минимум 10 символов'
                                                 '\n'
@@ -120,7 +120,7 @@ async def help_comma(message):
                                                 'всем пользователям бота')
                 asyncio.create_task(delete_message(msg, 60))
             elif msg[1] == 'accept':
-                msg = await bot.send_message(CHAT_ID, 'Команда /accept {!reply_to_message}\n'
+                msg = await bot.send_message(message.chat.id, 'Команда /accept {!reply_to_message}\n'
                                                 'Команда не имеет параметров, но обязана быть использована \n'
                                                 'в качестве ответа на изображение от пользователя'
                                                 '\n'
@@ -131,7 +131,7 @@ async def help_comma(message):
                                                 'библиотеку, так как она удаляет сообщение с изображением')
                 asyncio.create_task(delete_message(msg, 60))
             elif msg[1] == 'decline':
-                msg = await bot.send_message(CHAT_ID, 'Команда /decline {!reply_to_message} <message>\n'
+                msg = await bot.send_message(message.chat.id, 'Команда /decline {!reply_to_message} <message>\n'
                                                 'Команда имеет параметр "message", который обязателен\n'
                                                 'для заполнения и должен содержать минимум 5 символов,\n'
                                                 'и обязана быть использована в качестве ответа на изображение,'
@@ -143,21 +143,21 @@ async def help_comma(message):
                                                 'Команда удаляет сообщение с изображением')
                 asyncio.create_task(delete_message(msg, 60))
             elif msg[1] == 'list':
-                msg = await bot.send_message(CHAT_ID, 'Команда /list {argument} \n'
+                msg = await bot.send_message(message.chat.id, 'Команда /list {argument} \n'
                                                 'Команда имеет аргументы, которые обязательны\n'
                                                 'для заполнения.\n'
                                                 '\n'
                                                 '-u - Выводит список всех пользователей')
                 asyncio.create_task(delete_message(msg, 60))
             elif msg[1] == 'setrole':
-                msg = await bot.send_message(CHAT_ID, 'Команда /makeadmin {user_id} \n'
+                msg = await bot.send_message(message.chat.id, 'Команда /makeadmin {user_id} \n'
                                                 'Команда имеет аргумент, которые обязателен\n'
                                                 'для заполнения.\n'
                                                 '\n'
                                                 'user_id - id пользователя. Узнать можно через команду /list -u')
                 asyncio.create_task(delete_message(msg, 60))
         else:
-            msg = await bot.send_message(CHAT_ID, 'Команды администратора:\n'
+            msg = await bot.send_message(message.chat.id, 'Команды администратора:\n'
                                             '/bot_version - Выводит текущую версию бота\n'
                                             '/adminreaction - Выводит реакции для установки статуса работы '
                                             'над изображением\n'
