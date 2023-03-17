@@ -47,6 +47,9 @@ async def save_wallpaper(user_id, wallpaper):
                        "FROM suggested_wallpapers "
                        "WHERE wallpaper == '{wallpaper_id}'".format(wallpaper_id=wallpaper)).fetchone()
 
+
 async def setRole(user_id, role):
     if role == 1 or role == 0:
-        cur.execute(f"UPDATE `users` SET `isAdmin` = {role}  WHERE `user_id` = {user_id}")
+        query = """UPDATE `users` SET `isAdmin` = ?  WHERE `user_id` = ?"""
+        params = (role, user_id)
+        cur.execute(query, params)
