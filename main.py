@@ -43,7 +43,7 @@ async def create_master_room(ctx, *, args):
         return
 
     # Создание мастер комнаты в указанной категории
-    master_channel = await category.create_voice_channel(name=f'➕ {master_room_name}')
+    master_channel = await category.create_voice_channel(name=f'➕ {master_room_name}') 
 
     # Сохранение значений в базу данных
     cursor.execute("INSERT INTO master_rooms (masterroom_id, default_name, u_ammount) VALUES (?, ?, ?)", (master_channel.id, default_name, u_ammount))
